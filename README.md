@@ -1,2 +1,74 @@
-# unredact
-A simple tool for reading in poorly redacted documents and reproducing their origional form
+# PDF Redaction Text Recovery & Display Tool
+
+This repository contains a Python utility for extracting selectable (but visually redacted) text from PDF files and presenting it in a clear, human-readable format while preserving pagination and layout as closely as possible.
+
+The tool is intended for document analysis, archival review, research, and verification of redaction practices It does not bypass encryption or security controls; it only extracts text that remains present in the PDF content stream.
+
+---
+
+## What This Tool Does
+
+Many PDFs are “redacted” by placing opaque black rectangles over text without actually removing the underlying text objects. In such cases, the text remains selectable and copy-pastable.
+
+This tool:
+- Extracts that underlying text using positional information
+- Reconstructs lines to avoid word overlap and run-on text
+- Preserves original page size and pagination
+- Produces display-friendly output in one of two modes
+
+---
+
+## Output Modes
+
+### 1) Side-by-Side (Recommended)
+
+Each output page is double-width:
+
+- **Left:** Original PDF page (unchanged)
+- **Right:** Rebuilt, unredacted text positioned to match the original layout
+
+This mode is ideal for:
+- Review and comparison
+- Presentations or exhibits
+- Auditing redaction practices
+
+Example:
+
+![Side-by-side example](examples/example.png)
+
+---
+
+### 2) White-Text Overlay
+
+The extracted text is drawn in white directly on top of the original PDF.
+
+If black redaction bars are present, the text often becomes visible without explicitly detecting or modifying the bars.
+
+This mode is useful for:
+- Visual inspection
+- Demonstrating improper redactions
+
+---
+
+## How It Works
+
+1. `pdfplumber` extracts words along with their bounding boxes
+2. Words are grouped into lines based on vertical proximity
+3. Horizontal spacing is reconstructed from word gaps
+4. `PyMuPDF (pymupdf)` is used to:
+   - Embed original pages
+   - Draw rebuilt text with precise positioning
+   - Generate side-by-side or overlay output
+
+No OCR is performed.
+
+---
+
+## Installation
+
+```bash
+pip install pdfplumber pymupdf
+
+## Use
+```bash
+python redact_extract.py example.pdf
